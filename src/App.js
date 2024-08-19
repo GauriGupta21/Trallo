@@ -1,24 +1,43 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
+import { EventProvider } from "./context/EventContext";
+import EventForm from "./components/EventForm";
+import Modal from "./components/Modal";
+import "./App.css";
+import Calendar from "./components/Calender";
 
 function App() {
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const openModal = () => setModalOpen(true);
+  const closeModal = () => setModalOpen(false);
+  const handleSaveEvent = (newEvent) => {
+    // Logic to save the event
+    console.log("Event saved:", newEvent);
+    closeModal();
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <EventProvider>
+      <Router>
+        <div>
+          <nav>
+            <Link to="/">Trallo Calendar</Link>
+            <button onClick={openModal}>Add Event</button>
+          </nav>
+
+          <Routes>
+            <Route path="/" element={<Calendar />} />
+          </Routes>
+
+          {isModalOpen && (
+            <Modal isOpen={isModalOpen} onClose={closeModal}>
+              <EventForm onSave={handleSaveEvent} onClose={closeModal} />
+            </Modal>
+          )}
+        </div>
+      </Router>
+    </EventProvider>
   );
 }
 
